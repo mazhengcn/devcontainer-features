@@ -71,15 +71,6 @@ check_packages() {
     fi
 }
 
-sudo_if() {
-    COMMAND="$*"
-    if [ "$(id -u)" -eq 0 ]; then
-        su - "$(whoami)" -c "$COMMAND"
-    else
-        "$COMMAND"
-    fi
-}
-
 # Ensure apt is in non-interactive to avoid prompts
 export DEBIAN_FRONTEND=noninteractive
 
@@ -96,32 +87,32 @@ fi
 # Install JAX for different backends.
 if [[ "${JAX_VERSION}" != "none" ]] && [[ $(python --version) != "" ]]; then
     echo "Updating pip..."
-    sudo_if "python" -m pip install --no-cache-dir --upgrade --root-user-action=ignore pip
+    python -m pip install --no-cache-dir --upgrade --root-user-action=ignore pip
 
     # Find jax version using soft match
     find_version_from_git_tags JAX_VERSION "https://github.com/google/jax" "tags/jax-v"
     echo "(*) Installing jax ${JAX_VERSION}..."
-    sudo_if "python" -m pip install --no-cache-dir --root-user-action=ignore jax==${JAX_VERSION}
+    python -m pip install --no-cache-dir --root-user-action=ignore jax==${JAX_VERSION}
     
     # Find jaxlib verison using soft match
     find_version_from_git_tags JAXLIB_VERSION "https://github.com/google/jax" "tags/jaxlib-v"
     if [ "${JAXLIB_BACKEND}" = "cuda" ]; then
         JAXLIB_CUDA_VERSION="${JAXLIB_VERSION}+cuda${CUDA_VERSION}.cudnn${CUDNN_VERSION}"
         echo "Installing jaxlib ${JAXLIB_VERSION} CUDA backend..."
-        sudo_if "python" -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_CUDA_VERSION} -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_CUDA_VERSION} -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
     elif [ "${JAXLIB_BACKEND}" = "tpu" ]; then
         echo "Installing jaxlib ${JAXLIB_VERSION} TPU backend..."    
-        sudo_if "python" -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_VERSION} libtpu_nightly requests
+        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_VERSION} libtpu_nightly requests
     else
         echo "Installing jaxlib ${JAXLIB_VERSION} CPU backend..." 
-        sudo_if "python" -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_VERSION}
+        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_VERSION}
     fi
 fi
 
 # Install NN libraries if needed
 if [ "${INSTALL_NN_LIBS}" = "true" ]; then
     echo "Updating pip..."
-    sudo_if "python" -m pip install --no-cache-dir --upgrade --root-user-action=ignore pip
+    python -m pip install --no-cache-dir --upgrade --root-user-action=ignore pip
 
     package_list="tensorflow-cpu \
         tensorflow-datasets \
@@ -131,7 +122,7 @@ if [ "${INSTALL_NN_LIBS}" = "true" ]; then
         jaxline[customized]"
 
     echo "Installing ${package_list}..."
-    sudo_if "python" -m pip install --no-cache-dir --root-user-action=ignore \
+    python -m pip install --no-cache-dir --root-user-action=ignore \
         tensorflow-cpu \
         tensorflow-datasets \
         git+https://github.com/deepmind/dm-haiku \
