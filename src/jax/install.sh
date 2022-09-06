@@ -74,7 +74,7 @@ check_packages() {
 sudo_if() {
     COMMAND="$*"
     if [ "$(id -u)" -eq 0 ]; then
-        su - "$USER" -c "$COMMAND"
+        su - "$(whoami)" -c "$COMMAND"
     else
         "$COMMAND"
     fi

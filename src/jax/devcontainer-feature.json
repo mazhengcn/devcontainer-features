@@ -40,7 +40,7 @@
             "default": true,
             "description": "Whether to install neural network libraries"
         },
-        "CUDA_VERSION": {
+        "cudaVersion": {
             "type": "string",
             "enum": [
                 "11"
@@ -54,7 +54,10 @@
                 "82"
             ],
             "default": "82",
-            "description": "Version of CUDNN"
+            "description": "Version of cuDNN"
         }
-    }
+    },
+    "installsAfter": [
+        "ghcr.io/devcontainers/features/python"
+    ]
 }
