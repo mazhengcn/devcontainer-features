@@ -87,7 +87,7 @@ fi
 # Install JAX for different backends.
 if [[ "${JAX_VERSION}" != "none" ]] && [[ $(python --version) != "" ]]; then
     echo "Updating pip..."
-    python -m pip install --no-cache-dir --upgrade --root-user-action=ignore pip
+    python -m pip install --no-cache-dir --upgrade --root-user-action=ignore pip wheel
 
     # Find jax version using soft match
     find_version_from_git_tags JAX_VERSION "https://github.com/google/jax" "tags/jax-v"
