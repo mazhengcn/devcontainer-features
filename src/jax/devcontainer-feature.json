@@ -1,0 +1,60 @@
+{
+    "id": "jax",
+    "version": "1.0.0",
+    "name": "JAX",
+    "description": "Install JAX and its neural network libraries.",
+    "documentationURL": "https://github.com/mazhengcn/devcontainer-features/tree/main/src/jax",
+    "options": {
+        "jaxVersion": {
+            "type": "string",
+            "enum": [
+                "latest",
+                "0.3.17",
+                "0.3.16",
+                "0.3.15"
+            ],
+            "default": "latest",
+            "description": "Version of JAX to install"
+        },
+        "jaxlibVersion": {
+            "type": "string",
+            "enum": [
+                "latest",
+                "0.3.15"
+            ],
+            "default": "latest",
+            "description": "Version of JAX lib to install"
+        },
+        "jaxlibBackend": {
+            "type": "string",
+            "enum": [
+                "cuda",
+                "tpu",
+                "cpu"
+            ],
+            "default": "cpu",
+            "description": "Backend for jaxlib"
+        },
+        "installNNLibs": {
+            "type": "boolean",
+            "default": true,
+            "description": "Whether to install neural network libraries"
+        },
+        "CUDA_VERSION": {
+            "type": "string",
+            "enum": [
+                "11"
+            ],
+            "default": "11",
+            "description": "Version of CUDA backend"
+        },
+        "cudnnVersion": {
+            "type": "string",
+            "enum": [
+                "82"
+            ],
+            "default": "82",
+            "description": "Version of CUDNN"
+        }
+    }
+}
