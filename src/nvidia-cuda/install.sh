@@ -22,7 +22,7 @@ NVCC_PKG="cuda-nvcc-${CUDA_VERSION/./-}"
 # Ensure that the requested version of cuDNN is available AND compatible
 CUDNN_PKG_VERSION="libcudnn8=${CUDNN_VERSION}-1+cuda${CUDA_VERSION}"
 
-set -eux
+set -e
 export DEBIAN_FRONTEND=noninteractive
 
 if [ "$(id -u)" -ne 0 ]; then
@@ -47,16 +47,15 @@ check_packages() {
     fi
 }
 
-check_version() {
+install_package() {
     if ! apt-cache show "$1"; then
         echo "The requested version of $1 is not available!"
         exit 1
     fi
-}
 
-install_packages() {
-    echo "(*) Installing "$@"..."
-    apt-get -y install --no-install-recommends "$@"
+    echo "(*) Installing "$1"..."
+    apt-get update -y
+    apt-get -y install --no-install-recommends "$1"
 
     # Clean up
     apt-get clean -y
@@ -71,24 +70,18 @@ wget -O "$KEYRING_PACKAGE_FILE" "$KEYRING_PACKAGE_URL"
 apt-get -y install --no-install-recommends "$KEYRING_PACKAGE_FILE"
 apt-get update -y
 
-check_version "$CUDA_PKG"
+install_package "$CUDA_PKG"
 
-package_list=("$CUDA_PKG")
 if [ "$INSTALL_CUDNN" = "true" ]; then
-    check_version $CUDNN_PKG_VERSION
-    package_list+=("$CUDNN_PKG_VERSION")
+    install_package $CUDNN_PKG_VERSION
 fi
 
 if [ "$INSTALL_NVTX" = "true" ]; then
-    check_version $NVTX_PKG
-    package_list+=("$NVTX_PKG")
+    install_package $NVTX_PKG
 fi
 
 if [ "$INSTALL_NVCC" = "true" ]; then
-    check_version $NVCC_PKG
-    package_list+=("$NVCC_PKG")
+    install_package $NVCC_PKG
 fi
-
-install_packages $package_list
 
 echo "Done!"
