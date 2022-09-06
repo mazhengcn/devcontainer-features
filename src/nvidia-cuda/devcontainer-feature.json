@@ -1,6 +1,6 @@
 {
     "id": "nvidia-cuda",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "name": "NVIDIA CUDA",
     "description": "Installs shared libraries and compilers for NVIDIA CUDA.",
     "documentationURL": "https://github.com/mazhengcn/devcontainer-features/tree/main/src/nvidia-cuda",
