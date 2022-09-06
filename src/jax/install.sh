@@ -125,10 +125,10 @@ if [ "${INSTALL_NN_LIBS}" = "true" ]; then
     python -m pip install --no-cache-dir --root-user-action=ignore \
         tensorflow-cpu \
         tensorflow-datasets \
-        git+https://github.com/deepmind/dm-haiku \
-        git+https://github.com/deepmind/optax \
-        git+https://google/ml_collections \
-        git+https://mazhengcn/jaxline
+        dm-haiku \
+        optax \
+        ml-collections \
+        git+https://github.com/mazhengcn/jaxline.git
 fi
 
 echo "Done!"
