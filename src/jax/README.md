@@ -21,8 +21,6 @@ Install JAX and its neural network libraries.
 | jaxlibVersion | Version of JAX lib to install | string | latest |
 | jaxlibBackend | Backend for jaxlib | string | cpu |
 | installNNLibs | Whether to install neural network libraries | boolean | true |
-| cudaVersion | Version of CUDA backend | string | 11 |
-| cudnnVersion | Version of cuDNN | string | 82 |
 
 
 
