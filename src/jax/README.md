@@ -7,7 +7,7 @@ Install JAX and its neural network libraries.
 
 ```json
 "features": {
-        "ghcr.io/mazhengcn/devcontainer-features/jax:2": {
+        "ghcr.io/mazhengcn/devcontainer-features/jax:1": {
             "version": "latest"
         }
 }
