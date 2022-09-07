@@ -39,25 +39,10 @@
             "type": "boolean",
             "default": true,
             "description": "Whether to install neural network libraries"
-        },
-        "cudaVersion": {
-            "type": "string",
-            "enum": [
-                "11"
-            ],
-            "default": "11",
-            "description": "Version of CUDA backend"
-        },
-        "cudnnVersion": {
-            "type": "string",
-            "enum": [
-                "82"
-            ],
-            "default": "82",
-            "description": "Version of cuDNN"
         }
     },
     "installsAfter": [
-        "ghcr.io/devcontainers/features/python"
+        "ghcr.io/devcontainers/features/python",
+        "ghcr.io/devcontainers/features/nvidia-cuda"
     ]
 }

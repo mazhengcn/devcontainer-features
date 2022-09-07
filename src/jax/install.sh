@@ -4,8 +4,6 @@ JAX_VERSION=${VERSION:-"latest"}
 JAXLIB_VERSION=${VERSION:-"latest"}
 JAXLIB_BACKEND=${JAXLIB_BACKEND:-"cuda"}
 INSTALL_NN_LIBS=${INSTALLNNLIBS:-"true"}
-CUDA_VERSION=${CUDAVERSION:-"11"}
-CUDNN_VERSION=${CUDNNVERSION:-"82"}
 
 set -e
 
@@ -71,6 +69,46 @@ check_packages() {
     fi
 }
 
+check_cuda() {
+    if [ "$(find /usr -name "libcudart.so.*" | wc -l)" -eq 0 ] || [ "$(find /usr -name "libcudnn.so.*" | wc -l)" -eq 0 ]; then
+        echo "Missing CUDA or cuDNN libraries, please install them first or choose other JAX backends!"
+        exit 1
+    fi
+
+    echo "Checking CUDA and cuDNN versions..."
+    IFS=. libcudart=($(basename "$(find /usr -name "libcudart.so.*.*.*")"))
+    CUDA_MAJOR_VERSION="${libcudart[2]}"
+    CUDA_MINOR_VERSION="${libcudart[3]}"
+    CUDA_VERSION="${CUDA_MAJOR_VERSION}.${CUDA_MINOR_VERSION}"
+    echo "Found CUDA libraries version: ${CUDA_VERSION}"
+    IFS=. libcudnn=($(basename "$(find /usr -name "libcudnn.so.*.*.*")"))
+    CUDNN_MAJOR_VERSION="${libcudnn[2]}"
+    CUDNN_MINOR_VERSION="${libcudnn[3]}"
+    CUDNN_VERSION="${libcudnn[2]}2"
+    echo "Found cuDNN libraries version: ${CUDNN_MAJOR_VERSION}.${CUDNN_MINOR_VERSION}"
+
+    if [ "$(find /usr -name "ptxas" | wc -l)" -eq 0 ]; then
+        echo "JAX requires ptxas, install cuda-nvcc first..."
+        # Add NVIDIA's package repository to apt so that we can download packages
+        # Always use the ubuntu2004 repo because the other repos (e.g., debian11) are missing packages
+        NVIDIA_REPO_URL="https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64"
+        KEYRING_PACKAGE="cuda-keyring_1.0-1_all.deb"
+        KEYRING_PACKAGE_URL="$NVIDIA_REPO_URL/$KEYRING_PACKAGE"
+        KEYRING_PACKAGE_PATH="$(mktemp -d)"
+        KEYRING_PACKAGE_FILE="$KEYRING_PACKAGE_PATH/$KEYRING_PACKAGE"
+        
+        check_packages wget ca-certificates
+        wget -O "$KEYRING_PACKAGE_FILE" "$KEYRING_PACKAGE_URL"
+        apt_get_update
+        apt-get -y install --no-install-recommends "$KEYRING_PACKAGE_FILE"
+        apt-get update -y
+
+        apt-get -y install --no-install-recommends "cuda-nvcc-${CUDA_VERSION/./-}"
+        apt-get clean -y
+        rm -rf /var/lib/apt/lists/*
+    fi
+}
+
 # Ensure apt is in non-interactive to avoid prompts
 export DEBIAN_FRONTEND=noninteractive
 
@@ -87,25 +125,26 @@ fi
 # Install JAX for different backends.
 if [[ "${JAX_VERSION}" != "none" ]] && [[ $(python --version) != "" ]]; then
     echo "Updating pip..."
-    python -m pip install --no-cache-dir --upgrade --root-user-action=ignore pip wheel
+    python -m pip install --no-cache-dir --upgrade pip wheel
 
     # Find jax version using soft match
     find_version_from_git_tags JAX_VERSION "https://github.com/google/jax" "tags/jax-v"
     echo "(*) Installing jax ${JAX_VERSION}..."
-    python -m pip install --no-cache-dir --root-user-action=ignore jax==${JAX_VERSION}
+    python -m pip install --no-cache-dir --root-user-action=ignore jax=="${JAX_VERSION}"
     
     # Find jaxlib verison using soft match
     find_version_from_git_tags JAXLIB_VERSION "https://github.com/google/jax" "tags/jaxlib-v"
     if [ "${JAXLIB_BACKEND}" = "cuda" ]; then
-        JAXLIB_CUDA_VERSION="${JAXLIB_VERSION}+cuda${CUDA_VERSION}.cudnn${CUDNN_VERSION}"
+        check_cuda
+        JAXLIB_CUDA_VERSION="${JAXLIB_VERSION}+cuda${CUDA_MAJOR_VERSION}.cudnn${CUDNN_VERSION}"
         echo "Installing jaxlib ${JAXLIB_VERSION} CUDA backend..."
-        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_CUDA_VERSION} -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib=="${JAXLIB_CUDA_VERSION}" -f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
     elif [ "${JAXLIB_BACKEND}" = "tpu" ]; then
         echo "Installing jaxlib ${JAXLIB_VERSION} TPU backend..."    
-        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_VERSION} libtpu_nightly requests
+        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib=="${JAXLIB_VERSION}" libtpu_nightly requests
     else
         echo "Installing jaxlib ${JAXLIB_VERSION} CPU backend..." 
-        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib==${JAXLIB_VERSION}
+        python -m pip install --no-cache-dir --root-user-action=ignore jaxlib=="${JAXLIB_VERSION}"
     fi
 fi
 
