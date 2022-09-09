@@ -91,23 +91,14 @@ check_cuda() {
         echo "JAX requires ptxas, install cuda-nvcc first..."
         # Add NVIDIA's package repository to apt so that we can download packages
         # Always use the ubuntu2004 repo because the other repos (e.g., debian11) are missing packages
-        # NVIDIA_REPO_URL="https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64"
-        # KEYRING_PACKAGE="cuda-keyring_1.0-1_all.deb"
-        # KEYRING_PACKAGE_URL="$NVIDIA_REPO_URL/$KEYRING_PACKAGE"
-        # KEYRING_PACKAGE_PATH="$(mktemp -d)"
-        # KEYRING_PACKAGE_FILE="$KEYRING_PACKAGE_PATH/$KEYRING_PACKAGE"
+        NVIDIA_REPO_URL="https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64"
+        KEYRING_PACKAGE="cuda-keyring_1.0-1_all.deb"
+        KEYRING_PACKAGE_URL="$NVIDIA_REPO_URL/$KEYRING_PACKAGE"
         
         # check_packages wget ca-certificates
-        # wget -O "$KEYRING_PACKAGE_FILE" "$KEYRING_PACKAGE_URL"
         apt_get_update
-        # apt-get -y install --no-install-recommends "$KEYRING_PACKAGE_FILE"
-        # apt-get update -y
-
-        curl -fsSLO https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.deb
-        dpkg -i cuda-keyring_1.0-1_all.deb
-        # apt-get purge --autoremove -y curl
-        # rm -rf /var/lib/apt/lists/*
-
+        curl -fsSLO "${KEYRING_PACKAGE_URL}"
+        dpkg -i "${KEYRING_PACKAGE}"
         apt_get_update
         apt-get -y install --no-install-recommends "cuda-nvcc-${CUDA_VERSION/./-}"
         apt-get clean -y
