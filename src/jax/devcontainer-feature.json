@@ -1,6 +1,6 @@
 {
     "id": "jax",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "name": "JAX",
     "description": "Install JAX and its neural network libraries.",
     "documentationURL": "https://github.com/mazhengcn/devcontainer-features/tree/main/src/jax",
