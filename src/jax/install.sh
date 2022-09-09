@@ -103,10 +103,12 @@ check_cuda() {
         # apt-get -y install --no-install-recommends "$KEYRING_PACKAGE_FILE"
         # apt-get update -y
 
-        curl -fsSLO https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.deb && dpkg -i cuda-keyring_1.0-1_all.deb
+        curl -fsSLO https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-keyring_1.0-1_all.deb
+        dpkg -i cuda-keyring_1.0-1_all.deb
         # apt-get purge --autoremove -y curl
-        rm -rf /var/lib/apt/lists/*
+        # rm -rf /var/lib/apt/lists/*
 
+        apt_get_update
         apt-get -y install --no-install-recommends "cuda-nvcc-${CUDA_VERSION/./-}"
         apt-get clean -y
         rm -rf /var/lib/apt/lists/*
