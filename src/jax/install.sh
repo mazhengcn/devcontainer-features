@@ -164,7 +164,7 @@ if [ "${INSTALL_NN_LIBS}" = "true" ]; then
         dm-haiku \
         optax \
         ml-collections \
-        git+https://github.com/mazhengcn/jaxline.git
+        git+https://github.com/mazhengcn/jaxline
 fi
 
 echo "Done!"
