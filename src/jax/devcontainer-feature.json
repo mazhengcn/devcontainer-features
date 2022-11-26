@@ -1,6 +1,6 @@
 {
     "id": "jax",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "name": "JAX",
     "description": "Install JAX and its neural network libraries.",
     "documentationURL": "https://github.com/mazhengcn/devcontainer-features/tree/main/src/jax",
@@ -9,9 +9,7 @@
             "type": "string",
             "enum": [
                 "latest",
-                "0.3.17",
-                "0.3.16",
-                "0.3.15"
+                "0.3.25"
             ],
             "default": "latest",
             "description": "Version of JAX to install"
@@ -20,7 +18,7 @@
             "type": "string",
             "enum": [
                 "latest",
-                "0.3.15"
+                "0.3.25"
             ],
             "default": "latest",
             "description": "Version of JAX lib to install"

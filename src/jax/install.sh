@@ -152,7 +152,7 @@ if [ "${INSTALL_NN_LIBS}" = "true" ]; then
 
     package_list="tensorflow-cpu \
         tensorflow-datasets \
-        Haiku \
+        haiku \
         optax \
         ml-collections \
         jaxline[customized]"
